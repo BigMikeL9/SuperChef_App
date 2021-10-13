@@ -1,7 +1,6 @@
 {
   "name": "superchef",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "parcel index.html",
@@ -17,5 +16,14 @@
   "dependencies": {
     "core-js": "^3.18.2",
     "regenerator-runtime": "^0.13.9"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BigMikeL9/SuperChef_App.git"
+  },
+  "bugs": {
+    "url": "https://github.com/BigMikeL9/SuperChef_App/issues"
+  },
+  "homepage": "https://github.com/BigMikeL9/SuperChef_App#readme",
+  "description": ""
 }

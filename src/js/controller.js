@@ -4,6 +4,8 @@ import icons from 'url:../img/icons.svg'; // Parcel 2
 // Pollyfilling
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
+// model
+import * as model from './model';
 
 const recipeContainer = document.querySelector('.recipe');
 const message = document.querySelector('.recipe .message');
@@ -48,37 +50,11 @@ const getRecipe = async function () {
     // render loading spinner before recipe is loaded
     renderSpinner(recipeContainer);
 
-    // loading Recipe
-    const response = await fetch(
-      `https://forkify-api.herokuapp.com/api/v2/recipes/${id}`
-    );
+    // 1) loading Recipe
+    // async function will return a promise that we then need to handle whenever we call that async function. 👇
+    await model.loadRecipe(id);
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(
-        `Recipe not Found! 😟 --> ${data.message.slice(0, -1)} (${
-          response.status
-        })`
-      );
-    }
-
-    // changing property names of data Object
-    let { recipe } = data.data;
-    recipeData = {
-      id: recipe.id,
-      title: recipe.title,
-      publisher: recipe.publisher,
-      sourceUrl: recipe.source_url,
-      image: recipe.image_url,
-      ingredients: recipe.ingredients,
-      servings: recipe.servings,
-      cookingTime: recipe.cooking_time,
-    };
-
-    console.log('Recipe Data 👨‍🍳 -->', recipeData);
-
-    // Rendering Recipe in Application
+    // 2) Rendering Recipe in Application
     const html = `
         <figure class="recipe__fig">
           <img src="${recipeData.image}" alt="${

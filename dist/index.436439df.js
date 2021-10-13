@@ -462,6 +462,8 @@ var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 // Pollyfilling
 var _stable = require("core-js/stable");
 var _runtime = require("regenerator-runtime/runtime");
+// model
+var _model = require("./model");
 const recipeContainer = document.querySelector('.recipe');
 const message = document.querySelector('.recipe .message');
 const timeout = function(s) {
@@ -491,24 +493,10 @@ const getRecipe = async function() {
         if (!id) return;
         // render loading spinner before recipe is loaded
         renderSpinner(recipeContainer);
-        // loading Recipe
-        const response = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${id}`);
-        const data = await response.json();
-        if (!response.ok) throw new Error(`Recipe not Found! 😟 --> ${data.message.slice(0, -1)} (${response.status})`);
-        // changing property names of data Object
-        let { recipe  } = data.data;
-        recipeData = {
-            id: recipe.id,
-            title: recipe.title,
-            publisher: recipe.publisher,
-            sourceUrl: recipe.source_url,
-            image: recipe.image_url,
-            ingredients: recipe.ingredients,
-            servings: recipe.servings,
-            cookingTime: recipe.cooking_time
-        };
-        console.log('Recipe Data 👨‍🍳 -->', recipeData);
-        // Rendering Recipe in Application
+        // 1) loading Recipe
+        // async function will return a promise that we then need to handle whenever we call that async function. 👇
+        await _model.loadRecipe(id);
+        // 2) Rendering Recipe in Application
         const html = `\n        <figure class="recipe__fig">\n          <img src="${recipeData.image}" alt="${recipeData.title}" class="recipe__img" crossorigin />\n          <h1 class="recipe__title">\n            <span>${recipeData.title}</span>\n          </h1>\n        </figure>\n\n        <div class="recipe__details">\n          <div class="recipe__info">\n            <svg class="recipe__info-icon">\n              <use href="${_iconsSvgDefault.default}#icon-clock"></use>\n            </svg>\n            <span class="recipe__info-data recipe__info-data--minutes">${recipeData.cookingTime}</span>\n            <span class="recipe__info-text">minutes</span>\n          </div>\n          <div class="recipe__info">\n            <svg class="recipe__info-icon">\n              <use href="${_iconsSvgDefault.default}#icon-users"></use>\n            </svg>\n            <span class="recipe__info-data recipe__info-data--people">${recipeData.servings}</span>\n            <span class="recipe__info-text">servings</span>\n\n            <div class="recipe__info-buttons">\n              <button class="btn--tiny btn--increase-servings">\n                <svg>\n                  <use href="${_iconsSvgDefault.default}#icon-minus-circle"></use>\n                </svg>\n              </button>\n              <button class="btn--tiny btn--increase-servings">\n                <svg>\n                  <use href="${_iconsSvgDefault.default}#icon-plus-circle"></use>\n                </svg>\n              </button>\n            </div>\n          </div>\n\n          <div class="recipe__user-generated">\n            <svg>\n              <use href="${_iconsSvgDefault.default}#icon-user"></use>\n            </svg>\n          </div>\n          <button class="btn--round">\n            <svg class="">\n              <use href="${_iconsSvgDefault.default}#icon-bookmark-fill"></use>\n            </svg>\n          </button>\n        </div>\n\n       \n        <div class="recipe__ingredients">\n          <h2 class="heading--2">Recipe ingredients</h2>\n          <ul class="recipe__ingredient-list">\n          ${recipeData.ingredients.map((ingredient)=>{
             return `<li class="recipe__ingredient">\n              <svg class="recipe__icon">\n                <use href="${_iconsSvgDefault.default}#icon-check"></use>\n              </svg>\n              <div class="recipe__quantity">${ingredient.quantity}</div>\n              <div class="recipe__description">\n                <span class="recipe__unit">${ingredient.unit}</span>\n                ${ingredient.description}\n              </div>\n            </li>`;
         }).join('')}\n\n            <li class="recipe__ingredient">\n              <svg class="recipe__icon">\n                <use href="${_iconsSvgDefault.default}#icon-check"></use>\n              </svg>\n              <div class="recipe__quantity">0.5</div>\n              <div class="recipe__description">\n                <span class="recipe__unit">cup</span>\n                ricotta cheese\n              </div>\n            </li>\n          </ul>\n        </div>\n\n        <div class="recipe__directions">\n          <h2 class="heading--2">How to cook it</h2>\n          <p class="recipe__directions-text">\n            This recipe was carefully designed and tested by\n            <span class="recipe__publisher">${recipeData.publisher}</span>. Please check out\n            directions at their website.\n          </p>\n          <a\n            class="btn--small recipe__btn"\n            href=${recipeData.sourceUrl}\n            target="_blank"\n          >\n            <span>Directions</span>\n            <svg class="search__icon">\n              <use href="${_iconsSvgDefault.default}#icon-arrow-right"></use>\n            </svg>\n          </a>\n        </div>\n  `;
@@ -526,8 +514,15 @@ const getRecipe = async function() {
     'load'
 ].forEach((event)=>window.addEventListener(event, getRecipe)
 ); //////////////////////////////////////////////////////////////////////
+ //////////////////////////////////////////////////////////////////////
+ //////////////////////////////////////////////////////////////////////
+ //////////////////////////////////////////////////////////////////////
+ // This app uses The Model-View-Controller (MVC) Architecture pattern to separate the different components of the App (the Business Logic, the State, the HTTP Library, the Application Logic[Router], and the Presentation Logic [UI Layer]).
+ //////////////////////////////////////////////////////////////////////
+ //////////////////////////////////////////////////////////////////////
+ //////////////////////////////////////////////////////////////////////
 
-},{"url:../img/icons.svg":"iwCpK","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","core-js/stable":"eIyVg","regenerator-runtime/runtime":"cH8Iq"}],"iwCpK":[function(require,module,exports) {
+},{"url:../img/icons.svg":"iwCpK","core-js/stable":"eIyVg","regenerator-runtime/runtime":"cH8Iq","./model":"6Yfb5","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"iwCpK":[function(require,module,exports) {
 module.exports = require('./helpers/bundle-url').getBundleURL('8LZRF') + "icons.c097e590.svg";
 
 },{"./helpers/bundle-url":"8YnfL"}],"8YnfL":[function(require,module,exports) {
@@ -564,38 +559,6 @@ function getOrigin(url) {
 exports.getBundleURL = getBundleURLCached;
 exports.getBaseURL = getBaseURL;
 exports.getOrigin = getOrigin;
-
-},{}],"JacNc":[function(require,module,exports) {
-exports.interopDefault = function(a) {
-    return a && a.__esModule ? a : {
-        default: a
-    };
-};
-exports.defineInteropFlag = function(a) {
-    Object.defineProperty(a, '__esModule', {
-        value: true
-    });
-};
-exports.exportAll = function(source, dest) {
-    Object.keys(source).forEach(function(key) {
-        if (key === 'default' || key === '__esModule') return;
-        // Skip duplicate re-exports when they have the same value.
-        if (key in dest && dest[key] === source[key]) return;
-        Object.defineProperty(dest, key, {
-            enumerable: true,
-            get: function() {
-                return source[key];
-            }
-        });
-    });
-    return dest;
-};
-exports.export = function(dest, destName, get) {
-    Object.defineProperty(dest, destName, {
-        enumerable: true,
-        get: get
-    });
-};
 
 },{}],"eIyVg":[function(require,module,exports) {
 require('../modules/es.symbol');
@@ -13175,6 +13138,73 @@ try {
     if (typeof globalThis === "object") globalThis.regeneratorRuntime = runtime;
     else Function("r", "regeneratorRuntime = r")(runtime);
 }
+
+},{}],"6Yfb5":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "state", ()=>state
+);
+parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe
+);
+var _regeneratorRuntime = require("regenerator-runtime");
+const state = {
+    recipe: {
+    }
+};
+const loadRecipe = async function(id) {
+    try {
+        const response = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${id}`);
+        const data = await response.json();
+        if (!response.ok) throw new Error(`Recipe not Found! 😟 --> ${data.message.slice(0, -1)} (${response.status})`);
+        // changing property names of data Object
+        const { recipe  } = data.data;
+        state.recipeData = {
+            id: recipe.id,
+            title: recipe.title,
+            publisher: recipe.publisher,
+            sourceUrl: recipe.source_url,
+            image: recipe.image_url,
+            ingredients: recipe.ingredients,
+            servings: recipe.servings,
+            cookingTime: recipe.cooking_time
+        };
+        console.log('Recipe Data 👨‍🍳 -->', state.recipeData);
+    } catch (error) {
+        console.error(`⛔ ${error} ⛔`);
+    }
+};
+
+},{"regenerator-runtime":"cH8Iq","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"JacNc":[function(require,module,exports) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === 'default' || key === '__esModule') return;
+        // Skip duplicate re-exports when they have the same value.
+        if (key in dest && dest[key] === source[key]) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
 
 },{}]},["drOo7","jKMjS"], "jKMjS", "parcelRequire40c6")
 
