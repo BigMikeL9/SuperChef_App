@@ -1,7 +1,7 @@
 import { async } from 'regenerator-runtime';
 
 export const state = {
-  recipe: {},
+  recipeData: {},
 };
 
 ///////////////////////////////////////////////////////
