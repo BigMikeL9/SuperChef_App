@@ -464,13 +464,6 @@ var _stable = require("core-js/stable");
 var _runtime = require("regenerator-runtime/runtime");
 const recipeContainer = document.querySelector('.recipe');
 const message = document.querySelector('.recipe .message');
-const timeout = function(s) {
-    return new Promise(function(_, reject) {
-        setTimeout(function() {
-            reject(new Error(`Request took too long! Timeout after ${s} second`));
-        }, s * 1000);
-    });
-};
 // https://forkify-api.herokuapp.com/v2
 ///////////////////////////////////////////////////////
 // Loading Recipe Data from API -- Async/Await
@@ -500,7 +493,7 @@ const controlRecipes = async function() {
 ); //////////////////////////////////////////////////////////////////////
  //////////////////////////////////////////////////////////////////////
  //////////////////////////////////////////////////////////////////////
- // This app uses The Model-View-Controller (MVC) Architecture pattern to separate the different components of the App (the Business Logic, the State, the HTTP Library, the Application Logic[Router], and the Presentation Logic [UI Layer]).
+ // This app uses The Model-View-Controller (MVC) Architecture pattern to separate the different modules and components of the App (the Business Logic, the State, the HTTP Library, the Application Logic[Router], and the Presentation Logic [UI Layer]).
  //////////////////////////////////////////////////////////////////////
  //////////////////////////////////////////////////////////////////////
  //////////////////////////////////////////////////////////////////////
@@ -13157,25 +13150,41 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "API_URL", ()=>API_URL
 );
+parcelHelpers.export(exports, "TIMEOUT_SECONDS", ()=>TIMEOUT_SECONDS
+);
 const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes';
+const TIMEOUT_SECONDS = 10;
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"9l3Yy":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "getJSON", ()=>getJSON
 );
+// This Module will contain functions that are resused multiple times in the App
+var _config = require("./config");
+const timeout = function(s) {
+    return new Promise(function(_, reject) {
+        setTimeout(function() {
+            reject(new Error(`Request took too long! Timeout after ${s} second`));
+        }, s * 1000);
+    });
+};
 const getJSON = async function(url) {
     try {
-        const response = await fetch(url);
+        const response = await Promise.race([
+            fetch(url),
+            timeout(_config.TIMEOUT_SECONDS)
+        ]);
         const data = await response.json();
         if (!response.ok) throw new Error(`Recipe not Found! 😟 --> ${data.message.slice(0, -1)} (${response.status})`);
         return data;
     } catch (error) {
-        console.error(`⛔ ${error} ⛔`);
+        // handles the error in model.js
+        throw error;
     }
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"9q0mt":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","./config":"beA2m"}],"9q0mt":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _iconsSvg = require("url:../../img/icons.svg");

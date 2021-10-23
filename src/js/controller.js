@@ -8,14 +8,6 @@ import 'regenerator-runtime/runtime';
 const recipeContainer = document.querySelector('.recipe');
 const message = document.querySelector('.recipe .message');
 
-const timeout = function (s) {
-  return new Promise(function (_, reject) {
-    setTimeout(function () {
-      reject(new Error(`Request took too long! Timeout after ${s} second`));
-    }, s * 1000);
-  });
-};
-
 // https://forkify-api.herokuapp.com/v2
 
 ///////////////////////////////////////////////////////
@@ -53,7 +45,7 @@ const controlRecipes = async function () {
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-// This app uses The Model-View-Controller (MVC) Architecture pattern to separate the different components of the App (the Business Logic, the State, the HTTP Library, the Application Logic[Router], and the Presentation Logic [UI Layer]).
+// This app uses The Model-View-Controller (MVC) Architecture pattern to separate the different modules and components of the App (the Business Logic, the State, the HTTP Library, the Application Logic[Router], and the Presentation Logic [UI Layer]).
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
