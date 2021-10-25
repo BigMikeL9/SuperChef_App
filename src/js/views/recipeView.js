@@ -33,6 +33,16 @@ class RecipeView {
     // look at css ('.spinner' selector properties) which makes it spin forever.
   };
 
+  addHandlerRender(handler) {
+    // window.addEventListener('hashchange', controlRecipes);
+    // window.addEventListener('load', controlRecipes);
+
+    // This 👇 same as that 👆 but cleaner
+    ['hashchange', 'load'].forEach(event =>
+      window.addEventListener(event, handler)
+    );
+  }
+
   #generateMarkup() {
     return `
     <figure class="recipe__fig">
