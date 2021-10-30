@@ -480,7 +480,7 @@ const controlRecipes = async function() {
         // 2) Rendering Recipe in Application
         _recipeViewDefault.default.render(_model.state.recipeData);
     } catch (error) {
-        console.error(`⛔ ${error} ⛔`);
+        _recipeViewDefault.default.renderError();
     }
 };
 const init = function() {
@@ -13106,6 +13106,7 @@ const loadRecipe = async function(id) {
         console.log('Recipe Data 👨‍🍳 -->', state.recipeData);
     } catch (error) {
         console.error(`⛔ ${error} ⛔`);
+        throw error;
     }
 };
 
@@ -13172,7 +13173,7 @@ const getJSON = async function(url) {
             timeout(_config.TIMEOUT_SECONDS)
         ]);
         const data = await response.json();
-        if (!response.ok) throw new Error(`Recipe not Found! 😟 --> ${data.message.slice(0, -1)} (${response.status})`);
+        if (!response.ok) throw new Error(`Recipe not Found! Please try another one. 😞 --> ${data.message.slice(0, -1)} (${response.status})`);
         return data;
     } catch (error) {
         // handles the error in model.js
@@ -13189,6 +13190,8 @@ var _fractional = require("fractional");
 class RecipeView {
     #parentElement = document.querySelector('.recipe');
     #data;
+    #errorMessage = 'Recipe not Found! Please try another one. 😞';
+    #successMessage = '';
     render(data) {
         this.#data = data;
         this.#clear();
@@ -13199,12 +13202,23 @@ class RecipeView {
         this.#parentElement.innerHTML = '';
     }
     // Generic Loading Spinner function
-    renderSpinner = function() {
+    renderSpinner() {
         const markup = `\n    <div class="spinner">\n        <svg>\n          <use href="${_iconsSvgDefault.default}#icon-loader"></use>\n        </svg>\n      </div>\n`;
-        this.#parentElement.innerHTML = '';
+        this.#clear();
         this.#parentElement.insertAdjacentHTML('afterbegin', markup);
     // look at css ('.spinner' selector properties) which makes it spin forever.
-    };
+    }
+    renderError(errorMsg = this.#errorMessage) {
+        const html = `\n      <div class="error">\n        <div>\n          <svg>\n            <use href="${_iconsSvgDefault.default}#icon-alert-triangle"></use>\n          </svg>\n        </div>\n        <p>${errorMsg}</p>\n      </div> \n    `;
+        this.#clear();
+        this.#parentElement.insertAdjacentHTML('afterbegin', html);
+    }
+    // Success Message 👇
+    renderMessage(successMsg = this.#successMessage) {
+        const html = `\n      <div class="message">\n        <div>\n          <svg>\n            <use href="${_iconsSvgDefault.default}#icon-smile"></use>\n          </svg>\n        </div>\n        <p>${successMsg}</p>\n      </div> \n    `;
+        this.#clear();
+        this.#parentElement.insertAdjacentHTML('afterbegin', html);
+    }
     addHandlerRender(handler) {
         // window.addEventListener('hashchange', controlRecipes);
         // window.addEventListener('load', controlRecipes);

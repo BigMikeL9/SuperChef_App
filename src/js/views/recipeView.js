@@ -4,6 +4,8 @@ import { Fraction } from 'fractional';
 class RecipeView {
   #parentElement = document.querySelector('.recipe');
   #data;
+  #errorMessage = 'Recipe not Found! Please try another one. 😞';
+  #successMessage = '';
 
   render(data) {
     this.#data = data;
@@ -19,7 +21,7 @@ class RecipeView {
   }
 
   // Generic Loading Spinner function
-  renderSpinner = function () {
+  renderSpinner() {
     const markup = `
     <div class="spinner">
         <svg>
@@ -27,11 +29,44 @@ class RecipeView {
         </svg>
       </div>
 `;
-    this.#parentElement.innerHTML = '';
+    this.#clear();
     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
 
     // look at css ('.spinner' selector properties) which makes it spin forever.
-  };
+  }
+
+  renderError(errorMsg = this.#errorMessage) {
+    const html = `
+      <div class="error">
+        <div>
+          <svg>
+            <use href="${icons}#icon-alert-triangle"></use>
+          </svg>
+        </div>
+        <p>${errorMsg}</p>
+      </div> 
+    `;
+
+    this.#clear();
+    this.#parentElement.insertAdjacentHTML('afterbegin', html);
+  }
+
+  // Success Message 👇
+  renderMessage(successMsg = this.#successMessage) {
+    const html = `
+      <div class="message">
+        <div>
+          <svg>
+            <use href="${icons}#icon-smile"></use>
+          </svg>
+        </div>
+        <p>${successMsg}</p>
+      </div> 
+    `;
+
+    this.#clear();
+    this.#parentElement.insertAdjacentHTML('afterbegin', html);
+  }
 
   addHandlerRender(handler) {
     // window.addEventListener('hashchange', controlRecipes);

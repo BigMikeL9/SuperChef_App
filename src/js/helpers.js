@@ -17,9 +17,10 @@ export const getJSON = async function (url) {
 
     if (!response.ok) {
       throw new Error(
-        `Recipe not Found! 😟 --> ${data.message.slice(0, -1)} (${
-          response.status
-        })`
+        `Recipe not Found! Please try another one. 😞 --> ${data.message.slice(
+          0,
+          -1
+        )} (${response.status})`
       );
     }
 
