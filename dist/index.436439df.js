@@ -483,6 +483,18 @@ const controlRecipes = async function() {
         _recipeViewDefault.default.renderError();
     }
 };
+///////////////////////////////////////////////////////
+// Recipe Search Results
+const controlSearchResults = async function() {
+    try {
+        await _model.loadSearchResults('pizza');
+        console.log(_model.state.search.results);
+    } catch (error) {
+        console.error(error);
+    }
+};
+controlSearchResults();
+///////////////////////////////////////////////////////
 const init = function() {
     _recipeViewDefault.default.addHandlerRender(controlRecipes);
 };
@@ -13080,16 +13092,22 @@ parcelHelpers.export(exports, "state", ()=>state
 );
 parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe
 );
+parcelHelpers.export(exports, "loadSearchResults", ()=>loadSearchResults
+);
 var _regeneratorRuntime = require("regenerator-runtime");
 var _config = require("./config");
 var _helpers = require("./helpers");
 const state = {
     recipeData: {
+    },
+    search: {
+        query: '',
+        results: []
     }
 };
 const loadRecipe = async function(id) {
     try {
-        const data = await _helpers.getJSON(`${_config.API_URL}/${id}`);
+        const data = await _helpers.getJSON(`${_config.API_URL}${id}`);
         console.log(data);
         // changing property names of data Object
         const { recipe  } = data.data;
@@ -13104,6 +13122,24 @@ const loadRecipe = async function(id) {
             cookingTime: recipe.cooking_time
         };
         console.log('Recipe Data 👨‍🍳 -->', state.recipeData);
+    } catch (error) {
+        console.error(`⛔ ${error} ⛔`);
+        throw error;
+    }
+};
+const loadSearchResults = async function(query) {
+    try {
+        state.search.query = query;
+        const data = await _helpers.getJSON(`${_config.API_URL}?search=${query}`);
+        const { recipes  } = data.data;
+        state.search.results = recipes.map((recipe)=>{
+            return {
+                id: recipe.id,
+                title: recipe.title,
+                publisher: recipe.publisher,
+                image: recipe.image_url
+            };
+        });
     } catch (error) {
         console.error(`⛔ ${error} ⛔`);
         throw error;
@@ -13149,7 +13185,7 @@ parcelHelpers.export(exports, "API_URL", ()=>API_URL
 );
 parcelHelpers.export(exports, "TIMEOUT_SECONDS", ()=>TIMEOUT_SECONDS
 );
-const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes';
+const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes/';
 const TIMEOUT_SECONDS = 10;
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"9l3Yy":[function(require,module,exports) {
